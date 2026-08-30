@@ -1,0 +1,6 @@
+<svg width="240" height="60" viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- PLACEHOLDER LOGO — replace this file with the real Baigarts logo artwork -->
+  <rect x="0" y="0" width="240" height="60" fill="none"/>
+  <text x="0" y="38" font-family="Georgia, serif" font-size="26" letter-spacing="4" fill="#F4F1EA">THE BAIGARTS</text>
+  <line x1="2" y1="48" x2="120" y2="48" stroke="#A9843F" stroke-width="1.5"/>
+</svg>
