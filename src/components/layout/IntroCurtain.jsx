@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const SESSION_KEY = 'baigarts_intro_seen'
+export const SESSION_KEY = 'baigarts_intro_seen'
 export const ENTER_GALLERY_EVENT = 'baigarts:enter-gallery'
 export const GALLERY_READY_EVENT = 'baigarts:gallery-ready'
 
