@@ -1,15 +1,56 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { usePaintings } from '../../hooks/usePaintings'
 import PaintingGallery from '../../components/painting/PaintingGallery'
 import { PaintingGallerySkeleton } from '../../components/painting/PaintingCardSkeleton'
 import PublicLayout from '../../components/layout/PublicLayout'
 import SEO from '../../components/layout/SEO'
-import GallerySpotlight from '../../components/layout/GallerySpotlight'
-import AmbientGlow from '../../components/layout/AmbientGlow'
+import HeroVideo from '../../components/layout/HeroVideo'
+import { GALLERY_READY_EVENT, SESSION_KEY } from '../../components/layout/IntroCurtain'
 import Button from '../../components/ui/Button'
+
+// Cascading reveal timings (ms) — each hero element arrives slightly after
+// the previous one, wave-style, instead of the whole block fading in at once.
+const STEPS = {
+  eyebrow: 2200,
+  heading:3100 ,
+  paragraph:4000 ,
+  line: 5190,
+  buttons:6000 ,
+}
+
+function RevealItem({ show, delay, className = '', children }) {
+  return (
+    <div
+      className={`transition-all duration-700 ease-out ${
+        show ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-4 opacity-0 blur-sm'
+      } ${className}`}
+      style={{ transitionDelay: show ? `${delay}ms` : '0ms' }}
+    >
+      {children}
+    </div>
+  )
+}
 
 export default function Home() {
   const { paintings, loading } = usePaintings({ featuredOnly: true })
+  const [textVisible, setTextVisible] = useState(false)
+
+   useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const alreadySeen = sessionStorage.getItem(SESSION_KEY)
+    if (reducedMotion || alreadySeen) {
+      setTextVisible(true)
+      return
+    }
+
+    function handleReady() {
+      setTextVisible(true)
+    }
+
+    window.addEventListener(GALLERY_READY_EVENT, handleReady)
+    return () => window.removeEventListener(GALLERY_READY_EVENT, handleReady)
+  }, [])
 
   return (
     <PublicLayout>
@@ -19,29 +60,43 @@ export default function Home() {
         path="/"
       />
 
-      {/* Hero — spotlight follows the cursor, ambient light motes drift continuously */}
-      <GallerySpotlight className="overflow-hidden">
-        <AmbientGlow />
+      {/* Hero — full-length intro video plays once behind the text */}
+      <div className="relative overflow-hidden">
+        <HeroVideo />
         <section className="relative mx-auto max-w-6xl px-6 pt-16 pb-20 sm:pt-24">
-          <p className="wall-label text-brass">Original — Handmade — One of a Kind</p>
-          <h1 className="mt-6 max-w-2xl font-display text-4xl leading-[1.1] text-ivory sm:text-6xl">
-            Paintings that hold a room's silence.
-          </h1>
-          <p className="mt-6 max-w-md text-ivory-dim">
-            Every piece here is hand-painted, singular, and made to live somewhere for a very
-            long time.Dont Order in bulk the Painting are uniqe.
-          </p>
-          <span className="mt-8 block h-px animate-draw-line bg-gradient-to-r from-brass via-brass-bright to-transparent" style={{ animationDelay: '0.3s' }} />
-          <div className="mt-8 flex gap-4">
-            <Link to="/gallery">
-              <Button variant="primary">View the Gallery</Button>
-            </Link>
-            <Link to="/about">
-              <Button variant="outline">The Artist</Button>
-            </Link>
-          </div>
+          <RevealItem show={textVisible} delay={STEPS.eyebrow}>
+            <p className="wall-label text-brass">Original — Handmade — One of a Kind</p>
+          </RevealItem>
+
+          <RevealItem show={textVisible} delay={STEPS.heading} className="mt-6 max-w-2xl">
+            <h1 className="font-display text-4xl leading-[1.1] text-ivory sm:text-6xl">
+              Paintings that hold a room's silence.
+            </h1>
+          </RevealItem>
+
+          <RevealItem show={textVisible} delay={STEPS.paragraph} className="mt-6 max-w-md">
+            <p className="text-ivory-dim">
+              Every piece here is hand-painted, singular, and made to live somewhere for a very
+              long time. Once a painting sells, it does not come back.
+            </p>
+          </RevealItem>
+
+          <RevealItem show={textVisible} delay={STEPS.line} className="mt-8">
+            <span className="block h-px w-16 bg-gradient-to-r from-brass via-brass-bright to-transparent" />
+          </RevealItem>
+
+          <RevealItem show={textVisible} delay={STEPS.buttons} className="mt-8">
+            <div className="flex flex-wrap gap-4">
+              <Link to="/gallery">
+                <Button variant="primary">View the Gallery</Button>
+              </Link>
+              <Link to="/about">
+                <Button variant="outline">The Artist</Button>
+              </Link>
+            </div>
+          </RevealItem>
         </section>
-      </GallerySpotlight>
+      </div>
 
       {/* Featured Gallery */}
       <section className="mx-auto max-w-6xl px-6 pb-24">
