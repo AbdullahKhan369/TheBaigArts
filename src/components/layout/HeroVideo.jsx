@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ENTER_GALLERY_EVENT } from './IntroCurtain'
 
 const VIDEO_SRC = '/media/hero-gallery.mp4'
+const POSTER_IMAGE_SRC = '/media/hero-poster.jpg'
 const FALLBACK_IMAGE_SRC = '/media/hero-fallback.jpg'
 
 /**
@@ -43,12 +44,13 @@ export default function HeroVideo() {
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-ink" aria-hidden="true">
-      <video
+            <video
         ref={videoRef}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-out ${
           ended ? 'opacity-0' : 'opacity-100'
         }`}
-        src={VIDEO_SRC}
+               src={VIDEO_SRC}
+        poster={POSTER_IMAGE_SRC}
         muted={muted}
         autoPlay
         playsInline
